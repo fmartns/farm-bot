@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# IDE / Windows
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# Dados gerados em runtime (capturas de rodadas, diagnostico)
+rodadas/
+rodadas2/
+rodadas3/
+rodadas4/
+rodadas5/
+debug_captures/

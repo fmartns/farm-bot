@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "farm-bot"
+version = "10.0.0"
+description = "Automacao visual (OpenCV) de um minigame de coleta, para uso pessoal."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "fmartns66", email = "fmartns66@gmail.com" }]
+
+dependencies = [
+    "numpy>=1.24",
+    "opencv-python>=4.8",
+    "mss>=9",
+    "pydirectinput>=1.0.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "pyinstaller>=6",
+]
+
+[project.scripts]
+farm-bot = "farm_bot.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["farm_bot*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py39"
+extend-exclude = ["legacy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
