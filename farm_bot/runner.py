@@ -215,7 +215,14 @@ def run_live(args) -> None:
                                 if state.get("target") is None:
                                     miss_reason = "alvo nao foi travado"
                                 elif state.get("direction") is None:
-                                    miss_reason = "direcao do arco nao foi travada"
+                                    extents = state.get("progress_extents")
+                                    if extents is None:
+                                        miss_reason = "direcao do arco nao foi travada"
+                                    else:
+                                        miss_reason = (
+                                            "direcao do arco nao foi travada "
+                                            f"(+{extents[0]:.0f}/-{extents[1]:.0f}deg)"
+                                        )
                                 elif not state.get("armed_for_hit"):
                                     miss_reason = "arco nao foi armado antes da zona"
                                 else:

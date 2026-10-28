@@ -32,8 +32,8 @@ DEFAULT_CAP_DEGREES = 6.0
 # neutro (BGR 204,204,204 -> S=0 V=204). Em alguns PCs o mesmo arco chega
 # tingido ou mais escuro (vibrance, HDR, luz noturna, filtro de cor): com
 # S<=6 e V>=192 ele sumia, o digito e a zona travavam, e a direcao nunca
-# travava. O corte novo aceita esse cinza imperfeito. O miolo colorido
-# continua de fora: lilas S~48, rosa S~92, verde S~103. O branco tem
+# travava. WHITE_MAX_SAT e o piso: num HUD azulado o limite sobe por quadro
+# (ver _white_sat_limit) ate o meio entre o arco e a zona. O branco tem
 # prioridade, entao um arco tingido nao vira alvo.
 WHITE_MAX_SAT = 28
 WHITE_MIN_VAL = 170

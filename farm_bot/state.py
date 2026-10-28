@@ -167,6 +167,7 @@ def update_round_state(
         if state["target"] is not None and progress_profile is not None:
             plus = progress_extent(progress_profile, +1, args.progress_threshold, 200.0)
             minus = progress_extent(progress_profile, -1, args.progress_threshold, 200.0)
+            state["progress_extents"] = (plus, minus)
             if state["direction"] is None:
                 if max(plus, minus) >= 12.0 and abs(plus - minus) >= 6.0:
                     state["direction"] = +1 if plus > minus else -1

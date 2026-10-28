@@ -104,6 +104,29 @@ def fit_ring(roi: np.ndarray, cx0: float, cy0: float, scale: float,
     return best[0], best[1], best[2], best_score
 
 
+def _white_sat_limit(sat: np.ndarray, val: np.ndarray, annulus: np.ndarray) -> float:
+    """Saturacao maxima que ainda conta como arco, neste quadro.
+
+    O arco de referencia e cinza (S~0). Com filtro, HDR ou a cor do jogo ele
+    fica azulado (S~80) enquanto a zona verde/rosa/lilas continua muito mais
+    saturada (S~100 a 240). Um corte fixo ou perde o arco, ou engole a zona.
+    """
+    bright = annulus & (val >= WHITE_MIN_VAL)
+    samples = sat[bright]
+    if samples.size < 40:
+        return float(WHITE_MAX_SAT)
+    low = float(np.percentile(samples, 20))
+    high = float(np.percentile(samples, 90))
+    if high - low >= 35.0:
+        # Grupo claro do arco e grupo saturado da zona.
+        return float(min(150.0, max(float(WHITE_MAX_SAT), (low + high) / 2.0)))
+    median = float(np.median(samples))
+    if median <= 110.0:
+        # So o arco, tingido, sem a zona no miolo claro.
+        return float(min(140.0, max(float(WHITE_MAX_SAT), median + 18.0)))
+    return float(WHITE_MAX_SAT)
+
+
 def angular_profiles(roi: np.ndarray, cx: float, cy: float, scale: float) -> tuple:
     """Perfis hue-independent do anel.
 
@@ -140,10 +163,11 @@ def angular_profiles(roi: np.ndarray, cx: float, cy: float, scale: float) -> tup
 
     sat = hsv[:, :, 1]
     val = hsv[:, :, 2]
-    # Branco tem prioridade: o arco tingido (S ate WHITE_MAX_SAT) nao pode
-    # cair na classe colorida, senao a zona "engole" o progresso e a direcao
-    # nao trava. O miolo saturado da zona (lilas/rosa/verde) continua colorido.
-    white_pixels = (sat <= WHITE_MAX_SAT) & (val >= WHITE_MIN_VAL)
+    # O limite de saturacao do arco e por quadro. No cinza puro fica perto de
+    # WHITE_MAX_SAT; num HUD azulado o arco passa de S=28 e a zona continua
+    # bem mais saturada, entao o corte sobe ate o meio dos dois grupos.
+    white_limit = _white_sat_limit(sat, val, annulus)
+    white_pixels = (sat <= white_limit) & (val >= WHITE_MIN_VAL)
     colored_pixels = (sat >= COLOR_MIN_SAT) & (val >= COLOR_MIN_VAL) & ~white_pixels
 
     target_profile = (
