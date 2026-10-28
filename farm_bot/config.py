@@ -28,11 +28,15 @@ POLAR_R_MAX = 69.0
 # colorida falharam e com 8+ graus acertaram.
 DEFAULT_TARGET_FRACTION = 0.5
 DEFAULT_CAP_DEGREES = 6.0
-# Classificacao por pixel (HSV OpenCV, 0-255). O arco branco e cinza neutro
-# exato (BGR 204,204,204 -> S=0 V=204). Ha zonas palidas em degrade que
-# comecam quase brancas (S~10 V~184) e vao a S~30, entao o corte e baixo.
-WHITE_MAX_SAT = 6
-WHITE_MIN_VAL = 192
+# Classificacao por pixel (HSV OpenCV, 0-255). O arco de referencia e cinza
+# neutro (BGR 204,204,204 -> S=0 V=204). Em alguns PCs o mesmo arco chega
+# tingido ou mais escuro (vibrance, HDR, luz noturna, filtro de cor): com
+# S<=6 e V>=192 ele sumia, o digito e a zona travavam, e a direcao nunca
+# travava. O corte novo aceita esse cinza imperfeito. O miolo colorido
+# continua de fora: lilas S~48, rosa S~92, verde S~103. O branco tem
+# prioridade, entao um arco tingido nao vira alvo.
+WHITE_MAX_SAT = 28
+WHITE_MIN_VAL = 170
 COLOR_MIN_SAT = 8
 COLOR_MIN_VAL = 150
 # Perfis = fracao de pixels da classe em cada grau (0..1).

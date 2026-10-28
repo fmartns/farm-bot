@@ -123,6 +123,8 @@ def angular_profiles(roi: np.ndarray, cx: float, cy: float, scale: float) -> tup
     # 0.53-0.68, acima do limiar 0.44 do progresso: a zona era lida como
     # arco branco e o bot disparava cedo. Agora cada pixel e classificado
     # (branco x colorido) e o perfil e a FRACAO de pixels de cada classe.
+    # O branco aceita um cinza tingido ou mais escuro (ver WHITE_MAX_SAT);
+    # o miolo saturado da zona continua so na classe colorida.
     hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
     yy, xx = np.indices(roi.shape[:2])
     radius = np.hypot(xx - cx, yy - cy)
@@ -138,6 +140,9 @@ def angular_profiles(roi: np.ndarray, cx: float, cy: float, scale: float) -> tup
 
     sat = hsv[:, :, 1]
     val = hsv[:, :, 2]
+    # Branco tem prioridade: o arco tingido (S ate WHITE_MAX_SAT) nao pode
+    # cair na classe colorida, senao a zona "engole" o progresso e a direcao
+    # nao trava. O miolo saturado da zona (lilas/rosa/verde) continua colorido.
     white_pixels = (sat <= WHITE_MAX_SAT) & (val >= WHITE_MIN_VAL)
     colored_pixels = (sat >= COLOR_MIN_SAT) & (val >= COLOR_MIN_VAL) & ~white_pixels
 
